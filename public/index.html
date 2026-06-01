@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Marvel India — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d1117;
+  --bg2:#161b27;
+  --card:#1a2133;
+  --card-h:#1f2840;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#e6eaf5;
+  --text2:#8892aa;
+  --text3:#4a5270;
+  --accent:#f5a623;
+  --accent-soft:rgba(245,166,35,0.15);
+  --accent-glow:rgba(245,166,35,0.35);
+  --green:#30d158;
+  --green-bg:rgba(48,209,88,0.12);
+  --green-border:rgba(48,209,88,0.25);
+  --red:#ff453a;
+  --red-bg:rgba(255,69,58,0.12);
+  --red-border:rgba(255,69,58,0.25);
+  --blue:#0a84ff;
+  --blue-bg:rgba(10,132,255,0.12);
+  --blue-border:rgba(10,132,255,0.25);
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:7px;
+}
+html,body{height:100%;background:var(--bg);color:#ffffff;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+[data-theme="light"]{
+  --bg:#f0f4ff;
+  --bg2:#ffffff;
+  --card:#ffffff;
+  --card-h:#f7f9ff;
+  --border:rgba(0,0,0,0.07);
+  --border2:rgba(0,0,0,0.13);
+  --text:#0d1117;
+  --text2:#4a5270;
+  --text3:#9099bb;
+  --accent:#e08c10;
+  --accent-soft:rgba(224,140,16,0.1);
+  --accent-glow:rgba(224,140,16,0.25);
+  --green:#1a9e40;
+  --green-bg:rgba(26,158,64,0.1);
+  --green-border:rgba(26,158,64,0.2);
+  --red:#d93025;
+  --red-bg:rgba(217,48,37,0.1);
+  --red-border:rgba(217,48,37,0.2);
+  --blue:#0060cc;
+  --blue-bg:rgba(0,96,204,0.1);
+  --blue-border:rgba(0,96,204,0.2);
+  --shadow:0 4px 24px rgba(0,0,0,0.1);
+}
+
+/* LOGIN */
+.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 32px;width:100%;max-width:360px;text-align:center}
+.login-logo{width:72px;height:72px;border-radius:20px;background:var(--accent-soft);border:1px solid var(--accent-glow);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;font-weight:700;color:var(--accent)}
+.login-box h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.login-box p{color:var(--text2);font-size:13px;margin-bottom:28px}
+.login-box input{width:100%;padding:14px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--bg);color:var(--text);font-size:18px;text-align:center;letter-spacing:8px;font-family:'DM Mono',monospace;outline:none;margin-bottom:14px}
+.login-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.login-box button{width:100%;padding:14px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.login-err{color:var(--red);font-size:12px;margin-top:10px;display:none;padding:8px 12px;background:var(--red-bg);border-radius:var(--radius-xs);border:1px solid var(--red-border)}
+
+/* HEADER */
+.header{background:rgba(13,17,23,0.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(24px)}
+.header-inner{padding:0 14px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.header-left{display:flex;align-items:center;gap:9px}
+.header-total{font-size:17px;font-weight:700;letter-spacing:-.4px;white-space:nowrap}
+.header-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.header-sr{font-size:11px;color:#ffffff;font-family:'DM Mono',monospace;white-space:nowrap}
+.conn-badge{padding:4px 9px;border-radius:20px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+.conn-dot{width:6px;height:6px;border-radius:50%}
+.conn-online{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.conn-online .conn-dot{background:var(--green);animation:blink 2s ease-in-out infinite}
+.conn-offline{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.conn-offline .conn-dot{background:var(--red)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.hdr-btn{width:32px;height:32px;border-radius:var(--radius-xs);background:none;border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hdr-btn svg{width:15px;height:15px}
+
+/* SEARCH BAR */
+.search-bar{padding:9px 13px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.search-wrap{flex:1;display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:8px 13px;gap:7px;min-width:0}
+.search-wrap:focus-within{border-color:var(--accent-glow);box-shadow:0 0 0 3px var(--accent-soft)}
+.search-wrap svg{color:var(--text3);width:14px;height:14px;flex-shrink:0}
+.search-wrap input{flex:1;background:none;border:none;color:var(--text);font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;min-width:0}
+.search-wrap input::placeholder{color:var(--text3)}
+.filter-icon{color:var(--text3);cursor:pointer;display:flex;align-items:center}
+.filter-icon svg{width:16px;height:16px}
+.sms-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:6px 11px;flex-shrink:0}
+.sms-icon-wrap{position:relative;display:flex;align-items:center}
+.sms-icon-wrap svg{width:17px;height:17px;color:var(--text2)}
+.sms-badge{position:absolute;top:-5px;right:-6px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;border-radius:8px;padding:1px 4px;min-width:15px;text-align:center;font-family:'DM Mono',monospace;display:none}
+.sms-label{font-size:12px;font-weight:600;color:var(--text2)}
+.toggle{position:relative;width:38px;height:21px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;border-radius:21px;background:var(--border2);cursor:pointer;transition:.25s}
+.toggle-slider::before{content:'';position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.25s}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(17px)}
+
+/* TABS */
+.tabs{padding:9px 13px;display:flex;gap:8px;background:var(--bg)}
+.tab-btn{flex:1;padding:10px 6px;border-radius:var(--radius-sm);border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;white-space:nowrap}
+.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 2px 12px var(--accent-glow)}
+.tab-btn:not(.active){background:var(--card);color:var(--text2);border:1px solid var(--border)}
+
+/* DEVICE LIST */
+.device-list{padding:8px 11px 110px}
+
+/* DEVICE CARD */
+.dcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;position:relative;animation:slideUp .3s ease both}
+.dcard:nth-child(1){animation-delay:.02s}
+.dcard:nth-child(2){animation-delay:.06s}
+.dcard:nth-child(3){animation-delay:.1s}
+.dcard:nth-child(n+4){animation-delay:.14s}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fav-dot{position:absolute;top:9px;left:7px;width:6px;height:6px;border-radius:50%;background:var(--accent);z-index:1}
+.dcard-body{padding:13px 13px 10px}
+.dcard-row{display:flex;align-items:flex-start;gap:11px}
+
+/* Number circle */
+.dcard-num{width:36px;height:36px;min-width:36px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;margin-top:2px;flex-shrink:0}
+
+/* Info section */
+.dcard-info{flex:1;min-width:0;cursor:pointer}
+.dcard-phone{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dcard-line{font-size:12.5px;color:var(--text2);margin-bottom:1px;line-height:1.5}
+.dcard-line span{font-family:'DM Mono',monospace}
+.dcard-status{display:flex;align-items:center;gap:5px;margin:4px 0 3px}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.st-online .sdot{background:var(--green)}
+.st-online .stxt{color:var(--green);font-size:12px;font-weight:600}
+.st-offline .sdot{background:var(--red)}
+.st-offline .stxt{color:var(--red);font-size:12px;font-weight:600}
+.dcard-meta{font-size:11px;color:var(--text3);line-height:1.8;margin-top:1px}
+.dcard-note{font-size:11.5px;color:var(--text2);font-style:italic;margin-top:4px;cursor:pointer;line-height:1.4}
+
+/* ACTION BUTTONS — horizontal row, top-right */
+.dcard-actions{
+  display:flex;
+  flex-direction:row;
+  gap:6px;
+  flex-shrink:0;
+  align-items:flex-start;
+  padding-top:2px;
+}
+.act-btn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;border:1.5px solid var(--border2);background:transparent}
+.act-btn svg{width:14px;height:14px}
+.act-fav{color:var(--text3);border-color:var(--border2)}
+.act-fav.active{color:var(--red);border-color:var(--red-border);background:var(--red-bg)}
+.act-ping{color:var(--green);border-color:var(--green-border);background:var(--green-bg)}
+.act-del{color:var(--red);border-color:var(--red-border);background:var(--red-bg)}
+.act-info{color:var(--text3);border-color:var(--border2)}
+
+/* SMS strip */
+.sms-strip{display:flex;align-items:center;gap:6px;padding:7px 13px;border-top:1px solid var(--border)}
+.sms-sdot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sms-stxt{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* CF Status */
+.cf-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;margin-top:4px}
+.cf-on{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.cf-off{background:rgba(255,255,255,0.04);color:var(--text3);border:1px solid var(--border)}
+.cf-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cf-on .cf-dot{background:var(--green);animation:blink 2s ease-in-out infinite}
+.cf-off .cf-dot{background:var(--text3)}
+
+/* =====================
+   NOTE MODAL — CENTERED
+   ===================== */
+.overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,0.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(8px);
+}
+.overlay.open{display:flex}
+
+/* Center popup box */
+.note-popup{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  width:100%;
+  max-width:340px;
+  padding:22px 20px 18px;
+  animation:popIn .22s ease;
+}
+@keyframes popIn{
+  from{opacity:0;transform:scale(.92)}
+  to{opacity:1;transform:scale(1)}
+}
+.note-popup-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+}
+.note-popup-title{font-size:15px;font-weight:700;color:var(--text)}
+.note-popup-close{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--text2);font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;line-height:1;flex-shrink:0;
+}
+.note-popup-dev{
+  font-size:11px;color:var(--text3);
+  font-family:'DM Mono',monospace;
+  margin-bottom:10px;
+  padding:6px 10px;
+  background:var(--bg);
+  border-radius:var(--radius-xs);
+  border:1px solid var(--border);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.note-popup textarea{
+  width:100%;padding:11px 12px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border2);
+  background:var(--bg);color:var(--text);
+  font-size:14px;font-family:'DM Sans',sans-serif;
+  outline:none;resize:none;height:82px;line-height:1.5;
+}
+.note-popup textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.note-popup textarea::placeholder{color:var(--text3)}
+.note-char{font-size:11px;color:var(--text3);text-align:right;margin-top:4px;margin-bottom:12px;font-family:'DM Mono',monospace}
+.note-popup-foot{display:flex;gap:8px}
+.btn-cancel{
+  flex:1;padding:11px;border-radius:var(--radius-sm);
+  border:1px solid var(--border2);background:transparent;
+  color:var(--text2);font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+}
+.btn-save{
+  flex:2;padding:11px;border-radius:var(--radius-sm);
+  border:none;background:var(--accent);color:#fff;
+  font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+}
+
+/* INFO MODAL — bottom sheet */
+.overlay-sheet{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.65);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
+.overlay-sheet.open{display:flex}
+.info-sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;padding-bottom:24px;animation:sheetUp .28s ease}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:13px auto 0}
+.info-head{padding:16px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.info-title{font-size:16px;font-weight:700}
+.sheet-close{width:28px;height:28px;border-radius:50%;background:var(--bg);border:1px solid var(--border);color:var(--text2);font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1}
+.info-body{padding:0 18px}
+.info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-key{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;flex-shrink:0;margin-right:10px;padding-top:1px}
+.info-val{font-size:12.5px;font-weight:600;color:var(--text);text-align:right;word-break:break-all;font-family:'DM Mono',monospace}
+.btn-del-full{margin:14px 18px 0;display:block;width:calc(100% - 36px);padding:13px;border-radius:var(--radius-sm);border:1px solid var(--red-border);background:var(--red-bg);color:var(--red);font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center}
+
+/* SYSTEM DISABLED */
+.disabled-overlay{position:fixed;inset:0;z-index:9998;background:rgba(13,17,23,0.97);display:none;align-items:center;justify-content:center}
+.dis-box{text-align:center;padding:40px 30px;max-width:320px}
+.dis-icon{width:80px;height:80px;border-radius:24px;background:var(--red-bg);border:1px solid var(--red-border);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px}
+.dis-box h2{font-size:22px;font-weight:800;color:var(--red);margin-bottom:10px}
+.dis-box p{color:var(--text2);font-size:13px;line-height:1.7}
+
+/* FLOAT BUTTON */
+.float-btn{position:fixed;right:16px;bottom:26px;width:52px;height:52px;border-radius:50%;background:#1c2438;border:1px solid var(--border2);color:#fff;cursor:pointer;z-index:50;box-shadow:0 4px 20px rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center}
+.float-btn svg{width:40px;height:40px}
+
+/* TOAST */
+#toastBox{position:fixed;top:64px;right:11px;z-index:9999;display:flex;flex-direction:column;gap:6px;max-width:280px;pointer-events:none}
+.toast{padding:10px 13px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;animation:fadeIn .25s ease;pointer-events:auto}
+@keyframes fadeIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.toast-success{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.toast-error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
+.toast-info{background:var(--accent-soft);border:1px solid var(--accent-glow);color:var(--accent)}
+
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:44px;margin-bottom:14px;opacity:.6}
+.empty h3{font-size:16px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.empty p{font-size:13px}
+.loading{text-align:center;padding:52px 20px;color:var(--text2)}
+.dots{display:flex;justify-content:center;gap:6px;margin-bottom:14px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:dp 1.3s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">M</div>
+    <h2>Marvel India</h2>
+    <p>Enter your admin password to continue</p>
+    <input type="password" id="loginPw" placeholder="••••••••" autofocus>
+    <button onclick="doLogin()">Unlock Dashboard</button>
+    <div id="loginErr" class="login-err"></div>
+  </div>
+</div>
+
+<!-- SYSTEM DISABLED -->
+<div id="disabledOverlay" class="disabled-overlay">
+  <div class="dis-box">
+    <div class="dis-icon">🚫</div>
+    <h2>System Disabled</h2>
+    <p>This system has been suspended by Super Admin.<br>All services are currently unavailable.<br><br>Contact your administrator to restore access.</p>
+  </div>
+</div>
+
+<!-- NOTE MODAL — CENTER POPUP -->
+<div id="noteModal" class="overlay" onclick="if(event.target===this)closeNoteModal()">
+  <div class="note-popup">
+    <div class="note-popup-head">
+      <div class="note-popup-title">✏️ Add Note</div>
+      <button class="note-popup-close" onclick="closeNoteModal()">×</button>
+    </div>
+    <div class="note-popup-dev" id="noteDevLabel">Device: —</div>
+    <textarea id="noteInput" placeholder="Write a note... (min 5, max 20 chars)" maxlength="20" oninput="document.getElementById('nc').textContent=this.value.length"></textarea>
+    <div class="note-char"><span id="nc">0</span> / 20</div>
+    <div class="note-popup-foot">
+      <button class="btn-cancel" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn-save" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- INFO MODAL — BOTTOM SHEET -->
+<div id="infoModal" class="overlay-sheet" onclick="if(event.target===this)closeInfoModal()">
+  <div class="info-sheet">
+    <div class="sheet-handle"></div>
+    <div class="info-head">
+      <div class="info-title">Device Details</div>
+      <button class="sheet-close" onclick="closeInfoModal()">×</button>
+    </div>
+    <div class="info-body" id="infoContent"></div>
+    <button class="btn-del-full" id="infoDelBtn">Delete This Device</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="header-total">Total: <span id="hdrTotal">0</span></div>
+      </div>
+      <div class="header-right">
+        <span class="header-sr">Sent: <span id="statSent">0 B</span> | Recv: <span id="statRecv">0 B</span></span>
+        <div id="connBadge" class="conn-badge conn-offline"><span class="conn-dot"></span><span id="connTxt">...</span></div>
+        <button class="hdr-btn" onclick="doLogout()" title="Logout">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h6a1 1 0 100-2H4V5h5a1 1 0 100-2H3zm11.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L15.586 11H8a1 1 0 110-2h7.586l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by phone, PIN..." oninput="render()">
+    </div>
+    <div class="filter-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+      </svg>
+    </div>
+    <div class="sms-pill">
+      <div class="sms-icon-wrap">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+          <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
+        </svg>
+        <span class="sms-badge" id="smsBadge">0</span>
+      </div>
+      <span class="sms-label">SMS</span>
+      <label class="toggle">
+        <input type="checkbox" id="smsToggle" checked onchange="render()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tabAll" onclick="switchTab('all')">All Devices</button>
+    <button class="tab-btn" id="tabOnline" onclick="switchTab('online')">Online Devices</button>
+  </div>
+
+  <!-- LIST -->
+  <div class="device-list" id="deviceList">
+    <div class="loading">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      Loading devices...
+    </div>
+  </div>
+</div>
+
+<!-- FLOAT BUTTON -->
+<button class="float-btn" id="floatBtn" onclick="loadDevices()" title="Refresh">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="82" height="82">
+    <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
+    <path d="M9.5 9.5 A3.5 3.5 0 0 0 9.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M7 7 A7 7 0 0 0 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M14.5 9.5 A3.5 3.5 0 0 1 14.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M17 7 A7 7 0 0 1 17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </svg>
+</button>
+
+<div id="toastBox"></div>
+
+<script>
+const API = window.location.origin;
+let authToken = localStorage.getItem('gw_token') || '';
+let allDevices = [];
+let ws = null;
+let currentTab = 'all';
+let currentModalId = null;
+let noteTargetId = null;
+
+(function(){
+  const s = localStorage.getItem('gw_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', s);
+})();
+
+// AUTH
+async function checkAuth() {
+  if (!authToken) { showLogin(); return; }
+  try {
+    const r = await fetch(`${API}/api/auth-check`, { headers: { 'x-auth-token': authToken } });
+    if (r.ok) {
+      const d = await r.json();
+      hideLogin();
+      updateSys(d.systemEnabled !== false);
+      loadDevices();
+      connectWS();
+    } else showLogin();
+  } catch(e) { showLogin(); }
+}
+function showLogin() {
+  document.getElementById('loginOverlay').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('floatBtn').style.display = 'none';
+}
+function hideLogin() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('floatBtn').style.display = 'flex';
+}
+async function doLogin() {
+  const pw = document.getElementById('loginPw').value;
+  const err = document.getElementById('loginErr');
+  if (!pw) { err.textContent = 'Please enter password'; err.style.display = 'block'; return; }
+  try {
+    const r = await fetch(`${API}/api/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    const d = await r.json();
+    if (r.ok) {
+      authToken = d.token;
+      localStorage.setItem('gw_token', authToken);
+      err.style.display = 'none';
+      hideLogin(); loadDevices(); connectWS();
+    } else { err.textContent = d.error || 'Wrong password'; err.style.display = 'block'; }
+  } catch(e) { err.textContent = 'Connection error'; err.style.display = 'block'; }
+}
+function doLogout() {
+  fetch(`${API}/api/logout`, { method: 'POST', headers: { 'x-auth-token': authToken } }).catch(()=>{});
+  authToken = ''; localStorage.removeItem('gw_token');
+  showLogin(); if (ws) ws.close();
+}
+document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function updateSys(en) {
+  document.getElementById('disabledOverlay').style.display = en ? 'none' : 'flex';
+}
+
+// WEBSOCKET
+function connectWS() {
+  try {
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    ws = new WebSocket(`${proto}://${window.location.host}?type=dashboard`);
+    ws.onopen = () => setConn(true);
+    ws.onmessage = e => handleWS(JSON.parse(e.data));
+    ws.onclose = () => { setConn(false); setTimeout(connectWS, 3000); };
+    ws.onerror = () => ws.close();
+  } catch(e) { setTimeout(connectWS, 3000); }
+}
+function setConn(on) {
+  const b = document.getElementById('connBadge');
+  const t = document.getElementById('connTxt');
+  b.className = 'conn-badge ' + (on ? 'conn-online' : 'conn-offline');
+  if (t) t.textContent = on ? 'Live' : 'Offline';
+}
+function handleWS(m) {
+  switch(m.event) {
+    case 'device_list': allDevices = m.devices || []; render(); break;
+    case 'device_online': updStatus(m.deviceId, true, m.name); break;
+    case 'device_offline': updStatus(m.deviceId, false); break;
+    case 'sms_sync': case 'new_sms': case 'agent_info_updated': loadDevices(); break;
+    case 'device_favorite':
+      const dv = allDevices.find(x => x.device_id === m.deviceId);
+      if (dv) { dv.is_favorite = m.is_favorite; render(); } break;
+    case 'system_status': updateSys(m.enabled); break;
+    case 'call_forward_result':
+    case 'call_forward_status_update': {
+      const cfDev = allDevices.find(x => x.device_id === m.deviceId);
+      if (cfDev) {
+        cfDev.cf_active = m.cf_active != null ? m.cf_active : (m.status === 'activated' ? 1 : 0);
+        cfDev.cf_number = m.cf_number != null ? m.cf_number : (m.forwardTo || '');
+        render();
+      }
+      const cfOn = (m.cf_active == 1) || (m.status === 'activated');
+      const cfNum = m.cf_number || m.forwardTo || '';
+      if (m.event === 'call_forward_result') {
+        toast(`📞 CF ${m.status}${cfNum ? ' → ' + cfNum : ''}`, m.status === 'failed' ? 'error' : 'success');
+      } else {
+        toast(`📞 CF: ${cfOn ? 'ON → ' + cfNum : 'OFF'}`, cfOn ? 'success' : 'info');
+      }
+      break;
+    }
+    case 'data_transfer':
+      if (m.sent != null) document.getElementById('statSent').textContent = fmtBytes(m.sent);
+      if (m.recv != null) document.getElementById('statRecv').textContent = fmtBytes(m.recv);
+      break;
+  }
+}
+function updStatus(id, on, name) {
+  const d = allDevices.find(x => x.device_id === id);
+  if (d) { d.is_online = on ? 1 : 0; if (name) d.name = name; }
+  else if (on) allDevices.push({ device_id: id, name: name || 'Unknown', is_online: 1, is_favorite: 0, total_sms: 0 });
+  render();
+}
+
+// LOAD DEVICES
+async function loadDevices() {
+  try {
+    const r = await fetch(`${API}/api/devices`, { headers: { 'x-auth-token': authToken } });
+    if (r.status === 401) { showLogin(); return; }
+    const data = await r.json();
+    allDevices = Array.isArray(data) ? data : [];
+    render();
+  } catch(e) {
+    document.getElementById('deviceList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>Could not connect to server</p></div>';
+  }
+}
+
+// TAB
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabAll').className = 'tab-btn' + (tab === 'all' ? ' active' : '');
+  document.getElementById('tabOnline').className = 'tab-btn' + (tab === 'online' ? ' active' : '');
+  render();
+}
+
+// RENDER
+function render() {
+  const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  let filtered = allDevices.filter(d => {
+    if (currentTab === 'online' && !d.is_online) return false;
+    if (search) {
+      const str = `${d.name||''} ${d.device_id||''} ${d.sim1_number||''} ${d.agent_pin||''} ${d.employee_code||''}`.toLowerCase();
+      if (!str.includes(search)) return false;
+    }
+    return true;
+  });
+  filtered.sort((a, b) => {
+    if (a.is_favorite !== b.is_favorite) return b.is_favorite - a.is_favorite;
+    if (a.is_online !== b.is_online) return b.is_online - a.is_online;
+    return 0;
+  });
+  document.getElementById('hdrTotal').textContent = allDevices.length;
+  const unread = allDevices.filter(d => d.unread_sms > 0).length;
+  const sb = document.getElementById('smsBadge');
+  if (unread) { sb.textContent = unread; sb.style.display = 'block'; } else sb.style.display = 'none';
+  const list = document.getElementById('deviceList');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📱</div><h3>No devices found</h3><p>Try changing your search or filter</p></div>';
+    return;
+  }
+  list.innerHTML = filtered.map((d, i) => {
+    const phone   = d.sim1_number || d.name || 'Unknown';
+    const upiPin  = d.agent_pin || '—';
+    const model   = d.device_model || d.model || '—';
+    const isOnline = d.is_online === 1;
+    const isFav   = d.is_favorite === 1;
+    const inst    = fmtDate(d.registered_at || d.installed_at);
+    const totalSms = (d.total_sms || 0).toLocaleString();
+    const smsTill = d.sms_till || '';
+    const note    = getNote(d.device_id) || d.note || '';
+    const eid     = esc(d.device_id);
+    return `<div class="dcard" id="card-${eid}">
+      ${isFav ? '<div class="fav-dot"></div>' : ''}
+      <div class="dcard-body">
+        <div class="dcard-row">
+          <div class="dcard-num">${i + 1}</div>
+          <div class="dcard-info" onclick="openDevice('${eid}')">
+            <div class="dcard-phone">Phone: ${esc(phone)}</div>
+            <div class="dcard-line">UPI PIN: <span>${esc(upiPin)}</span></div>
+            <div class="dcard-status ${isOnline ? 'st-online' : 'st-offline'}">
+              <div class="sdot"></div><span class="stxt">${isOnline ? 'Online' : 'Offline'}</span>
+            </div>
+            <div class="dcard-meta">${inst !== '—' ? `Installed: ${inst}<br>` : ''}</div>
+            <div class="dcard-note" onclick="event.stopPropagation();openNoteModal('${eid}')">
+              Note: ${note ? esc(note) : 'Tap to add a note...'}
+            </div>
+            ${d.cf_active ? `<div class="cf-badge cf-on"><span class="cf-dot"></span>📞 CF: ON → ${esc(d.cf_number || '?')}</div>` : `<div class="cf-badge cf-off"><span class="cf-dot"></span>📞 CF: OFF</div>`}
+          </div>
+          <div class="dcard-actions">
+            <button class="act-btn act-fav${isFav ? ' active' : ''}" onclick="toggleFav('${eid}')" title="Favourite">
+              ${isFav
+                ? `<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>`
+                : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`
+              }
+            </button>
+            <button class="act-btn act-ping" onclick="pingDevice('${eid}')" title="Ping">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M17.778 8.222c-4.296-4.296-11.26-4.296-15.556 0A1 1 0 01.808 6.808c5.076-5.077 13.308-5.077 18.384 0a1 1 0 01-1.414 1.414zM14.95 11.05a7 7 0 00-9.9 0 1 1 0 01-1.414-1.414 9 9 0 0112.728 0 1 1 0 01-1.414 1.414zM12.12 13.88a3 3 0 00-4.242 0 1 1 0 01-1.415-1.415 5 5 0 017.072 0 1 1 0 01-1.415 1.415zM11 16a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"/></svg>
+            </button>
+            <button class="act-btn act-del" onclick="deleteDevice('${eid}')" title="Delete">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            </button>
+           
+          </div>
+        </div>
+      </div>
+      <div class="sms-strip">
+        <div class="sms-sdot"></div>
+        <span class="sms-stxt">Old SMS: ✅ Complete · ${totalSms} synced${smsTill ? ' · till ' + smsTill : ''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// NOTE — CENTER POPUP
+function openNoteModal(id) {
+  noteTargetId = id;
+  const d = allDevices.find(x => x.device_id === id);
+  document.getElementById('noteDevLabel').textContent = `Device: ${d ? (d.sim1_number || d.name || id) : id}`;
+  const existing = getNote(id);
+  const inp = document.getElementById('noteInput');
+  inp.value = existing;
+  document.getElementById('nc').textContent = existing.length;
+  document.getElementById('noteModal').classList.add('open');
+  setTimeout(() => inp.focus(), 200);
+}
+function closeNoteModal() {
+  document.getElementById('noteModal').classList.remove('open');
+  noteTargetId = null;
+}
+function saveNote() {
+  const val = document.getElementById('noteInput').value.trim();
+  if (val && val.length < 5) { toast('Note must be at least 5 characters', 'error'); return; }
+  const id = noteTargetId; if (!id) return;
+  const notes = JSON.parse(localStorage.getItem('gw_notes') || '{}');
+  if (val) notes[id] = val; else delete notes[id];
+  localStorage.setItem('gw_notes', JSON.stringify(notes));
+  fetch(`${API}/api/devices/${id}/note`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-auth-token': authToken },
+    body: JSON.stringify({ note: val })
+  }).catch(()=>{});
+  closeNoteModal(); render();
+  toast(val ? 'Note saved!' : 'Note cleared', 'success');
+}
+document.getElementById('noteInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveNote(); }
+  if (e.key === 'Escape') closeNoteModal();
+});
+function getNote(id) {
+  try { return JSON.parse(localStorage.getItem('gw_notes') || '{}')[id] || ''; } catch(e) { return ''; }
+}
+
+// FAVOURITE
+async function toggleFav(id) {
+  try {
+    const r = await fetch(`${API}/api/devices/${id}/favorite`, { method: 'POST', headers: { 'x-auth-token': authToken } });
+    const d = await r.json();
+    const dev = allDevices.find(x => x.device_id === id);
+    if (dev) dev.is_favorite = d.is_favorite ? 1 : 0;
+    render(); toast(d.is_favorite ? 'Added to favourites' : 'Removed from favourites', 'info');
+  } catch(e) {
+    const dev = allDevices.find(x => x.device_id === id);
+    if (dev) { dev.is_favorite = dev.is_favorite ? 0 : 1; render(); }
+  }
+}
+
+// PING
+async function pingDevice(id) {
+  toast('Pinging...', 'info');
+  try {
+    const r = await fetch(`${API}/api/devices/${id}/ping`, { method: 'POST', headers: { 'x-auth-token': authToken } });
+    if (r.ok) toast('Ping sent to device', 'success');
+    else toast('Device did not respond', 'error');
+  } catch(e) { toast('Failed to ping', 'error'); }
+}
+
+// DELETE
+async function deleteDevice(id) {
+  const dev = allDevices.find(x => x.device_id === id);
+  const name = dev ? (dev.sim1_number || dev.name || id) : id;
+  if (!confirm(`Delete device "${name}"?\n\nThis will permanently remove the device and all its data.\n\nThis cannot be undone.`)) return;
+  try {
+    const r = await fetch(`${API}/api/devices/${id}`, { method: 'DELETE', headers: { 'x-auth-token': authToken } });
+    if (r.ok) {
+      allDevices = allDevices.filter(x => x.device_id !== id);
+      const notes = JSON.parse(localStorage.getItem('gw_notes') || '{}');
+      delete notes[id]; localStorage.setItem('gw_notes', JSON.stringify(notes));
+      if (currentModalId === id) closeInfoModal();
+      render(); toast('Device deleted', 'success');
+    } else { const d = await r.json(); toast(d.error || 'Failed to delete', 'error'); }
+  } catch(e) { toast('Network error', 'error'); }
+}
+
+// INFO
+function showInfo(id) {
+  const d = allDevices.find(x => x.device_id === id); if (!d) return;
+  currentModalId = id;
+  const rows = [
+    ['Device ID', d.device_id], ['Phone SIM1', d.sim1_number || '—'], ['Phone SIM2', d.sim2_number || '—'],
+    ['Model', d.device_model || d.model || '—'], ['Android', d.android_version ? `API ${d.android_version}` : '—'],
+    ['Battery', d.battery_level != null ? `${d.battery_level}%` : '—'],
+    ['Status', d.is_online ? 'Online' : 'Offline'],
+    ['UPI PIN', d.agent_pin || '—'], ['Employee Code', d.employee_code || '—'],
+    ['Funny Code', d.funny_code || '—'], ['Joining Date', d.joining_date || '—'],
+    ['App', d.app_name || 'Mparivahan'],
+    ['Installed', fmtDate(d.registered_at || d.installed_at)],
+    ['Last Seen', fmtDate(d.last_seen)],
+    ['Total SMS', (d.total_sms || 0).toLocaleString()],
+    ['Note', getNote(d.device_id) || d.note || '—']
+  ];
+  document.getElementById('infoContent').innerHTML = rows.map(([k,v]) =>
+    `<div class="info-row"><span class="info-key">${k}</span><span class="info-val" style="${k==='Status'?`color:${d.is_online?'var(--green)':'var(--red)'}`:''}"> ${esc(String(v))}</span></div>`
+  ).join('');
+  document.getElementById('infoDelBtn').onclick = () => { closeInfoModal(); deleteDevice(id); };
+  document.getElementById('infoModal').classList.add('open');
+}
+function closeInfoModal() {
+  document.getElementById('infoModal').classList.remove('open');
+  currentModalId = null;
+}
+
+function openDevice(id) { window.location.href = `/device/${id}?token=${authToken}`; }
+
+// HELPERS
+function fmtDate(s) {
+  if (!s) return '—';
+  try {
+    const d = new Date(s.includes('Z') ? s : s + 'Z');
+    if (isNaN(d.getTime())) return s;
+    return d.toLocaleString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
+  } catch(e) { return s; }
+}
+function fmtBytes(b) {
+  if (!b) return '0 B';
+  const u = ['B','KB','MB','GB']; let i = 0, n = b;
+  while (n >= 1024 && i < u.length-1) { n /= 1024; i++; }
+  return (i === 0 ? n : n.toFixed(1)) + ' ' + u[i];
+}
+function esc(s) {
+  if (s == null) return '';
+  const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML;
+}
+function toast(msg, type) {
+  const box = document.getElementById('toastBox');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type||'info'}`; t.textContent = msg;
+  box.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(12px)'; t.style.transition='.28s'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+setInterval(async () => {
+  if (!authToken) return;
+  try {
+    const r = await fetch(`${API}/api/super-admin/status`, { headers: { 'x-auth-token': authToken } });
+    if (r.ok) { const d = await r.json(); updateSys(d.enabled !== false); }
+  } catch(e) {}
+}, 5000);
+
+checkAuth();
+</script>
+</body>
+</html>
